@@ -174,6 +174,32 @@ The following is an illustrative response showing successful and failed platform
 }
 ```
 
+## Screenshots and Demonstration
+
+### API Documentation
+
+The FastAPI Swagger interface provides interactive API documentation.
+
+![Swagger API](screenshots/swagger/api_endpoint.png)
+
+### Posting API Response
+
+The response demonstrates successful and failed platform operations.
+
+![Posting Response](screenshots/swagger/posting_response.png)
+
+### Live Platform Publishing
+
+The following screenshots demonstrate successful real-world publishing.
+
+**Mastodon**
+
+![Mastodon Published Post](screenshots/platforms/mastodon_post.png)
+
+**Bluesky**
+
+![Bluesky Published Post](screenshots/platforms/bluesky_post.png)
+
 ## Error Handling
 
 Each platform is processed independently. Exceptions and request timeouts are caught separately, allowing the remaining platforms to continue publishing.
