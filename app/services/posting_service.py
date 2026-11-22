@@ -1,5 +1,5 @@
+
 import asyncio
-from datetime import datetime, timezone
 
 from app.schemas import PlatformResult
 from app.platforms.base import BasePlatform
@@ -18,21 +18,32 @@ class PostingService:
     ) -> PlatformResult:
 
         platform_name = getattr(
-            platform, "name", platform.__class__.__name__
+            platform,
+            "name",
+            platform.__class__.__name__
         )
 
         try:
-            return await platform.publish(message, cta_url)
+            result = await asyncio.wait_for(
+                platform.publish(message, cta_url),
+                timeout=30.0
+            )
+            return result
+
+        except asyncio.TimeoutError:
+            error_message = "Platform request timed out"
 
         except Exception as error:
-            return PlatformResult(
-                platform=platform_name,
-                status="failure",
-                posted_url=None,
-                public_access=None,
-                datetime=datetime.now(timezone.utc),
-                error=str(error)
-            )
+            error_message = str(error)
+
+        return PlatformResult(
+            platform=platform_name,
+            status="failed",
+            posted_url=None,
+            public_access=False,
+            datetime=None,
+            error=error_message
+        )
 
     async def publish_to_all(
         self,
@@ -45,6 +56,4 @@ class PostingService:
             for platform in self.platforms
         ]
 
-        results = await asyncio.gather(*tasks)
-
-        return results
+        return await asyncio.gather(*tasks)
